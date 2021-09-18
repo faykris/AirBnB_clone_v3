@@ -14,7 +14,7 @@ from models.user import User
 @app_views.route("/status", methods=["GET"])
 def status():
     """"Function that return a JSON dictionary"""
-    return jsonify({"status": "OK"})
+    return jsonify({"status": "OK"}), 200
 
 
 @app_views.route("/stats", methods=["GET"])
@@ -28,4 +28,4 @@ def number_each_object():
     objects["states"] = storage.count(State)
     objects["users"] = storage.count(User)
 
-    return jsonify(objects)
+    return jsonify(objects), 200
