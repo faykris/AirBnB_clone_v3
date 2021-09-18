@@ -18,7 +18,8 @@ def close_storage(exc):
 
 
 @app.errorhandler(404)
-def invalid_route(e):
+def invalid_route(exc):
+    """handles error when the page is not found"""
     return jsonify(error="Not found")
 
 
