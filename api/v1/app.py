@@ -20,7 +20,7 @@ def close_storage(exc):
 @app.errorhandler(404)
 def invalid_route(exc):
     """handles error when the page is not found"""
-    return jsonify(error="Not found")
+    return jsonify(error="Not found"), 404
 
 
 if __name__ == "__main__":
