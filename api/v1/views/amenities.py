@@ -19,7 +19,7 @@ def amenities_get():
     return jsonify(ameniti_list), 200
 
 
-@app_views.route("/amenities/<amenity_id>", methods=["GET"],
+@app_views.route("/amenities/<string:amenity_id>", methods=["GET"],
                  strict_slashes=False)
 def get_amenity_id(amenity_id):
     """Function that return a amenity object on JSON format"""
@@ -31,7 +31,7 @@ def get_amenity_id(amenity_id):
         abort(404)
 
 
-@app_views.route("/amenities/<amenity_id>", methods=["DELETE"],
+@app_views.route("/amenities/<string:amenity_id>", methods=["DELETE"],
                  strict_slashes=False)
 def delete_amenity_id(amenity_id):
     """Function that remove a amenitie object on JSON format"""
@@ -64,7 +64,7 @@ def amenities_create():
     return jsonify(amenities_dictionary), 201
 
 
-@app_views.route("/amenities/<amenity_id>", methods=["PUT"],
+@app_views.route("/amenities/<string:amenity_id>", methods=["PUT"],
                  strict_slashes=False)
 def update_amenities(amenity_id):
     """Function that updates a Amenties dictionary and retireve
