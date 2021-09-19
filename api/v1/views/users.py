@@ -10,13 +10,13 @@ from models.user import User
                  strict_slashes=False)
 def users_get():
     """Function that return a user dictionary object on JSON format"""
-    ameniti_list = []
+    user_list = []
     users_dictionary = storage.all('User').values()
 
     for obj in users_dictionary:
-        amenitie = obj.to_dict()
-        ameniti_list.append(amenitie)
-    return jsonify(ameniti_list), 200
+        user = obj.to_dict()
+        user_list.append(user)
+    return jsonify(user_list), 200
 
 
 @app_views.route("/users/<string:user_id>", methods=["GET"],
