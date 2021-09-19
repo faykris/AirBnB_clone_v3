@@ -66,22 +66,17 @@ def amenities_create():
 
 @app_views.route("/amenities/<string:amenity_id>", methods=["PUT"],
                  strict_slashes=False)
-def update_amenities(amenity_id):
-    """Function that updates a Amenties dictionary and retireve
-    in Json Format"""
-    amenities_data = request.get_json()
-    amenity = storage.get("Amenity", amenity_id)
+def amenity_put(amenity_id=None):
+    """ Function that Update a state object and returns a JSON format"""
+    amenity_obj = storage.get(Amenity, amenity_id)
 
-    if not amenity:
-        abort(404)
-    if not amenities_data:
-        abort(400, {"Not a JSON"})
-
-    if 'name' in amenities_data:
-        for key, value in amenities_data.items():
-            if key not in ['id', 'amenity_id', 'created_at', 'updated_at']:
-                setattr(amenity, key, value)
-        storage.save()
-
-    update_dictionary = amenity.to_dict()
-    return jsonify(update_dictionary), 200
+    if amenity_obj is not None:
+        amenity_data = request.get_json()
+        if not amenity_data:
+            return jsonify(error="Not a JSON"), 400
+        for key, value in amenity_data.items():
+            if key not in ['id', 'created_at', 'updated_at']:
+                setattr(amenity_obj, key, value)
+        amenity_obj.save()
+        return jsonify(amenity_obj.to_dict())
+    abort(404)
