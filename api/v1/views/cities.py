@@ -67,18 +67,20 @@ def city_post(state_id):
                  strict_slashes=False)
 def update_cities(city_id):
     """Function that updates a cities dictionary and retireve in Json Format"""
-    flask_dictionary = request.get_json()
-    cities_dictionary = storage.get("City", city_id)
+    city_data = request.get_json()
+    city = storage.get("City", city_id)
 
-    if not cities_dictionary:
-        return jsonify(error=""), 400
-    if not flask_dictionary:
+    if not city:
+        abort(404)
+    if not city_data:
         return jsonify(error="Not a JSON"), 400
 
-    if 'name' in flask_dictionary:
-        for k, v in flask_dictionary.items():
-            setattr(cities_dictionary, k, v)
+    city_name = city_data.get("name")
+
+    if city_name in city_data:
+        for key, value in city_data.items():
+            setattr(city, key, value)
         storage.save()
 
-    update_dictionary = cities_dictionary.to_dict()
+    update_dictionary = city.to_dict()
     return jsonify(update_dictionary), 200
