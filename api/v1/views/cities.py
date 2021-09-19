@@ -63,9 +63,8 @@ def city_post(state_id):
     abort(404)
 
 
-@app_views.route("/cities/<string:state_id>", methods=["PUT"],
-                 strict_slashes=False)
-def update_cities(city_id):
+@app_views.route("/cities/<city_id>", methods=["PUT"])
+def city_update(city_id):
     """Function that updates a cities dictionary and retireve in Json Format"""
     city_data = request.get_json()
     city = storage.get("City", city_id)
@@ -77,7 +76,8 @@ def update_cities(city_id):
 
     if 'name' in city_data:
         for key, value in city_data.items():
-            setattr(city, key, value)
+            if key not in ['id', 'state_id', 'created_at', 'updated_at']:
+                setattr(city, key, value)
         storage.save()
 
     update_dictionary = city.to_dict()
