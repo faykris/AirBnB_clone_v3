@@ -67,18 +67,6 @@ test_file_storage.py'])
             self.assertTrue(len(func[1].__doc__) >= 1,
                             "{:s} method needs a docstring".format(func[0]))
 
-    def test_count(self):
-        """Test count from file storage"""
-        state_obj = State()
-        objects = models.storage.count(state_obj.name)
-        self.assertNotEqual(objects, None)
-
-    def test_get(self):
-        """Test get object from file storage"""
-        state_obj = State()
-        obj = models.storage.count(state_obj.id)
-        self.assertNotEqual(obj, None)
-
 
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
@@ -125,3 +113,17 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", "r") as f:
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_count(self):
+        """Test count from file storage"""
+        state_obj = State()
+        objects = models.storage.count(state_obj.name)
+        self.assertNotEqual(objects, None)
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_get(self):
+        """Test get object from file storage"""
+        state_obj = State()
+        obj = models.storage.count(state_obj.id)
+        self.assertNotEqual(obj, None)
