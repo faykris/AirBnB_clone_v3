@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Places view - module"""
+"""Amenities view - module"""
 from api.v1.views import app_views
 from flask import jsonify, request, abort
 from models import storage
@@ -10,16 +10,16 @@ from models.place import Place
                  strict_slashes=False)
 def places_get():
     """Function that return a place dictionary object on JSON format"""
-    ameniti_list = []
+    palce_list = []
     places_dictionary = storage.all('Place').values()
 
     for obj in places_dictionary:
         amenitie = obj.to_dict()
-        ameniti_list.append(amenitie)
-    return jsonify(ameniti_list), 200
+        palce_list.append(amenitie)
+    return jsonify(palce_list), 200
 
 
-@app_views.route("/places/<city_id>/places", methods=["GET"],
+@app_views.route("/cities/<city_id>/places", methods=["GET"],
                  strict_slashes=False)
 def get_place_id(place_id):
     """Function that return a place object on JSON format"""
@@ -66,22 +66,17 @@ def places_create():
 
 @app_views.route("/places/<string:place_id>", methods=["PUT"],
                  strict_slashes=False)
-def update_places(place_id):
-    """Function that updates a Amenties dictionary and retireve
-    in Json Format"""
-    places_data = request.get_json()
-    place = storage.get("Place", place_id)
+def place_put(place_id=None):
+    """ Function that Update a state object and returns a JSON format"""
+    place_obj = storage.get(Place, place_id)
 
-    if not place:
-        abort(404)
-    if not places_data:
-        abort(400, {"Not a JSON"})
-
-    if 'name' in places_data:
-        for key, value in places_data.items():
-            if key not in ['id', 'place_id', 'created_at', 'updated_at']:
-                setattr(place, key, value)
-        storage.save()
-
-    update_dictionary = place.to_dict()
-    return jsonify(update_dictionary), 200
+    if place_obj is not None:
+        place_data = request.get_json()
+        if not place_data:
+            return jsonify(error="Not a JSON"), 400
+        for key, value in place_data.items():
+            if key not in ['id', 'created_at', 'updated_at']:
+                setattr(place_obj, key, value)
+        place_obj.save()
+        return jsonify(place_obj.to_dict())
+    abort(404)
