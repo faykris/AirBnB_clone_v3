@@ -75,9 +75,7 @@ def update_cities(city_id):
     if not city_data:
         return jsonify(error="Not a JSON"), 400
 
-    city_name = city_data.get("name")
-
-    if city_name in city_data:
+    if 'name' in city_data:
         for key, value in city_data.items():
             setattr(city, key, value)
         storage.save()
