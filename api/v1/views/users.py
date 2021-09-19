@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Users view - module"""
+"""Amenities view - module"""
 from api.v1.views import app_views
 from flask import jsonify, request, abort
 from models import storage
@@ -66,22 +66,17 @@ def users_create():
 
 @app_views.route("/users/<string:user_id>", methods=["PUT"],
                  strict_slashes=False)
-def update_users(user_id):
-    """Function that updates a Amenties dictionary and retireve
-    in Json Format"""
-    users_data = request.get_json()
-    user = storage.get("User", user_id)
+def user_put(user_id=None):
+    """ Function that Update a state object and returns a JSON format"""
+    user_obj = storage.get(User, user_id)
 
-    if not user:
-        abort(404)
-    if not users_data:
-        abort(400, {"Not a JSON"})
-
-    if 'name' in users_data:
-        for key, value in users_data.items():
-            if key not in ['id', 'user_id', 'created_at', 'updated_at']:
-                setattr(user, key, value)
-        storage.save()
-
-    update_dictionary = user.to_dict()
-    return jsonify(update_dictionary), 200
+    if user_obj is not None:
+        user_data = request.get_json()
+        if not user_data:
+            return jsonify(error="Not a JSON"), 400
+        for key, value in user_data.items():
+            if key not in ['id', 'created_at', 'updated_at']:
+                setattr(user_obj, key, value)
+        user_obj.save()
+        return jsonify(user_obj.to_dict())
+    abort(404)
