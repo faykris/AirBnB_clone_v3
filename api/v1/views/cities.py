@@ -63,7 +63,7 @@ def city_post(state_id):
     abort(404)
 
 
-@app_views.route("/states/<string:state_id>/cities", methods=['POST'],
+@app_views.route("/cities/<string:state_id>", methods=["PUT"],
                  strict_slashes=False)
 def update_cities(city_id):
     """Function that updates a cities dictionary and retireve in Json Format"""
