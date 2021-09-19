@@ -24,10 +24,7 @@ def invalid_route(exc):
 
 
 if __name__ == "__main__":
-    host = getenv("HBNB_API_HOST")
-    port = getenv("HBNB_API_PORT")
-    if host is None:
-        host = '0.0.0.0'
-    if port is None:
-        port = 5000
+    host = getenv("HBNB_API_HOST", default='0.0.0.0')
+    port = getenv("HBNB_API_PORT", default=5000)
+
     app.run(host=host, port=port, threaded=True, debug=True)
