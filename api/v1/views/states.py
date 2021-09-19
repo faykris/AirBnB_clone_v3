@@ -1,8 +1,7 @@
 #!/uar/bin/python3
-"""Is the Status of your API dile"""
+"""State view - module"""
 from api.v1.views import app_views
-from flask import jsonify, request, abort, make_response
-
+from flask import jsonify, request, abort
 from models import storage
 from models.state import State
 
@@ -17,7 +16,8 @@ def states_objects():
     return jsonify(state_list)
 
 
-@app_views.route("/states/<string:state_id>", methods=['GET'], strict_slashes=False)
+@app_views.route("/states/<string:state_id>", methods=['GET'],
+                 strict_slashes=False)
 def state_get(state_id=None):
     """Function that return a state object on JSON format"""
     if state_id is not None:
@@ -27,7 +27,8 @@ def state_get(state_id=None):
     abort(404)
 
 
-@app_views.route("/states/<string:state_id>", methods=['DELETE'], strict_slashes=False)
+@app_views.route("/states/<string:state_id>", methods=['DELETE'],
+                 strict_slashes=False)
 def state_delete(state_id=None):
     """Function that return a state object on JSON format"""
     if state_id is not None:
@@ -53,7 +54,8 @@ def state_post():
     return jsonify(state_new.to_dict()), 201
 
 
-@app_views.route("/states/<string:state_id>", methods=['PUT'], strict_slashes=False)
+@app_views.route("/states/<string:state_id>", methods=['PUT'],
+                 strict_slashes=False)
 def state_put(state_id=None):
     """Update a state object and returns a JSON format"""
     state_obj = storage.get(State, state_id)
