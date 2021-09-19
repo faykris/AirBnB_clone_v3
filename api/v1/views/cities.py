@@ -56,6 +56,7 @@ def city_post(state_id):
         city_name = city_data.get("name")
         if city_name is None:
             return jsonify(error="Missing name"), 400
+        city_data["state_id"] = state_id
         city_new = City(**city_data)
         if city_new.state_id == state_id:
             city_new.save()
