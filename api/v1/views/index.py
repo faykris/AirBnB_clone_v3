@@ -12,7 +12,7 @@ def status():
 
 
 @app_views.route("/stats", strict_slashes=False)
-def number_each_object():
+def count_stats():
     """"Returns the number of each objects by type"""
     return jsonify({"amenities": storage.count("Amenity"),
                     "cities": storage.count("City"),
