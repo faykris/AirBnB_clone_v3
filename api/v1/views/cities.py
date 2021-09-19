@@ -61,3 +61,24 @@ def city_post(state_id):
             city_new.save()
             return jsonify(city_new.to_dict()), 201
     abort(404)
+
+
+@app_views.route("/states/<string:state_id>/cities", methods=['POST'],
+                 strict_slashes=False)
+def update_cities(city_id):
+    """Function that updates a cities dictionary and retireve in Json Format"""
+    flask_dictionary = request.get_json()
+    cities_dictionary = storage.get("City", city_id)
+
+    if not cities_dictionary:
+        return jsonify(error=""), 400
+    if not flask_dictionary:
+        return jsonify(error="Not a JSON"), 400
+
+    if 'name' in flask_dictionary:
+        for k, v in flask_dictionary.items():
+            setattr(cities_dictionary, k, v)
+        storage.save()
+
+    update_dictionary = cities_dictionary.to_dict()
+    return jsonify(update_dictionary), 200
