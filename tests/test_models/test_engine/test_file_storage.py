@@ -6,6 +6,7 @@ Contains the TestFileStorageDocs classes
 from datetime import datetime
 import inspect
 import models
+from models import storage
 from models.engine import file_storage
 from models.amenity import Amenity
 from models.base_model import BaseModel
@@ -115,15 +116,16 @@ class TestFileStorage(unittest.TestCase):
         self.assertEqual(json.loads(string), json.loads(js))
 
     @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
-    def test_count(self):
-        """Test count from file storage"""
-        state_obj = State()
-        objects = models.storage.count(state_obj.name)
-        self.assertNotEqual(objects, None)
+    def test_get(self):
+        st = State(name="Arizona")
+        st.save()
+        state_get = storage.get(State, st.id)
+        self.assertTrue(st.id == state_get.id)
 
     @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
-    def test_get(self):
-        """Test get object from file storage"""
-        state_obj = State()
-        obj = models.storage.count(state_obj.id)
-        self.assertNotEqual(obj, None)
+    def test_count(self):
+        count_pre = storage.count(State)
+        st_new = State(name="Arizona")
+        st_new.save()
+        count_post = models.storage.count(State)
+        self.assertTrue((count_pre + 1) == count_post)
