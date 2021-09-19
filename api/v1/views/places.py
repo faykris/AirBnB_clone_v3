@@ -30,6 +30,7 @@ def places_by_cities_get(city_id):
 
     if not storage.get(City, city_id):
         abort(404)
+
     for place in storage.all(Place).values():
         if place.to_dict()["city_id"] == city_id:
             palces_list.append(place.to_dict())
@@ -40,9 +41,9 @@ def places_by_cities_get(city_id):
 @app_views.route("/places/<place_id>", methods=["GET"])
 def get_place_id(place_id):
     """Function that remove a Place object"""
-    d = storage.get(Place, place_id)
-    if d:
-        return jsonify(d.to_dict()), 200
+    place = storage.get(Place, place_id)
+    if place:
+        return jsonify(place.to_dict()), 200
     else:
         abort(404)
 
@@ -64,21 +65,21 @@ def delete_place_id(place_id):
 @app_views.route("/cities/<city_id>/places", methods=["POST"])
 def create_place(city_id):
     """ Function that create a place object and returns a JSON format"""
-    dic_t = request.get_json()
+    place_data = request.get_json()
 
-    if not storage.get("City", city_id):
+    if not storage.get(City, city_id):
         abort(404)
-    if not dic_t:
+    if not place_data:
         abort(400, {"Not a JSON"})
-    if 'user_id' not in dic_t:
+    if 'user_id' not in place_data:
         abort(400, {"Missing user_id"})
-    if not storage.get("User", dic_t["user_id"]):
+    if not storage.get("User", place_data["user_id"]):
         abort(404)
-    if 'name' not in dic_t:
+    if 'name' not in place_data:
         abort(400, {"Missing name"})
 
-    dic_t["city_id"] = city_id
-    new_place = Place(**dic_t)
+    place_data["city_id"] = city_id
+    new_place = Place(**place_data)
     storage.new(new_place)
     storage.save()
 
@@ -89,7 +90,7 @@ def create_place(city_id):
 def update_places(place_id):
     """Function that Update a place object and returns a JSON format"""
     place_dictionary = request.get_json()
-    place_update = storage.get("Place", place_id)
+    place_update = storage.get(Place, place_id)
 
     if not place_update:
         abort(404)
