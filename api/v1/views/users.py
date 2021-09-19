@@ -11,7 +11,7 @@ from models.user import User
 def users_get():
     """Function that return a user dictionary object on JSON format"""
     user_list = []
-    users_dictionary = storage.all('User').values()
+    users_dictionary = storage.all(User).values()
 
     for obj in users_dictionary:
         user = obj.to_dict()
@@ -23,7 +23,7 @@ def users_get():
                  strict_slashes=False)
 def get_user_id(user_id):
     """Function that return a user object on JSON format"""
-    users_data = storage.get("User", user_id)
+    users_data = storage.get(User, user_id)
 
     if users_data:
         return jsonify(users_data.to_dict()), 200
@@ -35,7 +35,7 @@ def get_user_id(user_id):
                  strict_slashes=False)
 def delete_user_id(user_id):
     """Function that remove a amenitie object on JSON format"""
-    users_data = storage.get("User", user_id)
+    users_data = storage.get(User, user_id)
 
     if users_data is not None:
         storage.delete(users_data)
