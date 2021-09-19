@@ -1,19 +1,21 @@
 #!/usr/bin/python3
-"""Is the Status of your API file"""
+"""app Flask - module"""
 
 from api.v1.views import app_views
 from flask import Flask, jsonify
+from flask_cors import CORS
 from models import storage
 from os import getenv
 
 
 app = Flask(__name__)
 app.register_blueprint(app_views)
+cors = CORS(app, resources={"/*": {"origins": "0.0.0.0"}})
 
 
 @app.teardown_appcontext
 def close_storage(exc):
-    """call reload() method for deserializing the JSON file to objects"""
+    """call close method for db Storage"""
     storage.close()
 
 
