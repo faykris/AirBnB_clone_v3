@@ -6,62 +6,62 @@ from models import storage
 from models.amenity import Amenity
 
 
-@app_views.route("/amenities", methods=['GET'],
+@app_views.route("/amenities", methods=["GET"],
                  strict_slashes=False)
-def amenities_by_state(state_id=None):
+def amenities_get():
+    """Function that return a amenity dictionary object on JSON format"""
+    ameniti_list = []
+    amenities_dictionary = storage.all('Amenity').values()
+
+    for obj in amenities_dictionary:
+        amenitie = obj.to_dict()
+        ameniti_list.append(amenitie)
+    return jsonify(ameniti_list), 200
+
+
+@app_views.route("/amenities/<string:amenity_id>", methods=["GET"],
+                 strict_slashes=False)
+def get_amenity_id(amenity_id):
     """Function that return a amenity object on JSON format"""
-    if state_id is not None:
-        state_obj = storage.get(State, state_id)
-        if state_obj is not None:
-            amenities_list = []
-            for key, value in storage.all(Amenity).items():
-                if state_obj.id == value.state_id:
-                    amenities_list.append(value.to_dict())
-            return jsonify(amenities_list)
-    abort(404)
+    amenities_data = storage.get("Amenity", amenity_id)
+
+    if amenities_data:
+        return jsonify(amenities_data.to_dict()), 200
+    else:
+        abort(404)
 
 
-@app_views.route("/amenities/<string:amenity_id>", methods=['GET'],
+@app_views.route("/amenities/<string:amenity_id>", methods=["DELETE"],
                  strict_slashes=False)
-def amenity_get(amenity_id=None):
-    """Function that return a amenity object on JSON format"""
-    if amenity_id is not None:
-        amenity_obj = storage.get(Amenity, amenity_id)
-        if amenity_obj is not None:
-            return jsonify(amenity_obj.to_dict())
-    abort(404)
+def delete_amenity_id(amenity_id):
+    """Function that remove a amenitie object on JSON format"""
+    amenities_data = storage.get("Amenity", amenity_id)
+
+    if amenities_data is not None:
+        storage.delete(amenities_data)
+        storage.save()
+        return jsonify({}), 200
+    else:
+        abort(404)
 
 
-@app_views.route("/amenities/<string:amenity_id>", methods=['DELETE'],
+@app_views.route("/amenities", methods=["POST"],
                  strict_slashes=False)
-def amenity_delete(amenity_id=None):
-    """Function that remove a amenity object on JSON format"""
-    if amenity_id is not None:
-        amenity_obj = storage.get(Amenity, amenity_id)
-        if amenity_obj is not None:
-            storage.delete(amenity_obj)
-            storage.save()
-            return jsonify({}), 200
-    abort(404)
+def amenities_create():
+    """Function that creates and return a amenitie object on JSON format"""
+    amenities_data = request.get_json()
 
+    if not amenities_data:
+        abort(400, {"Not a JSON"})
+    if 'name' not in amenities_data:
+        abort(400, {"Missing name"})
 
-@app_views.route("/amenities", methods=['POST'],
-                 strict_slashes=False)
-def amenity_post(state_id):
-    """Function that creates and return a amenity object on JSON format"""
-    if state_id is not None and storage.get(State, state_id) is not None:
-        amenity_data = request.get_json()
-        if not amenity_data:
-            return jsonify(error="Not a JSON"), 400
-        amenity_name = amenity_data.get("name")
-        if amenity_name is None:
-            return jsonify(error="Missing name"), 400
-        amenity_data["state_id"] = state_id
-        amenity_new = Amenity(**amenity_data)
-        if amenity_new.state_id == state_id:
-            amenity_new.save()
-            return jsonify(amenity_new.to_dict()), 201
-    abort(404)
+    new_amenity = Amenity(**amenities_data)
+    storage.new(new_amenity)
+    storage.save()
+    amenities_dictionary = new_amenity.to_dict()
+
+    return jsonify(amenities_dictionary), 201
 
 
 @app_views.route("/amenities/<string:amenity_id>", methods=["PUT"],
