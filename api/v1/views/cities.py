@@ -66,21 +66,17 @@ def city_post(state_id):
 
 @app_views.route("/cities/<string:city_id>", methods=["PUT"],
                  strict_slashes=False)
-def city_update(city_id):
-    """Function that updates a cities dictionary and retireve in Json Format"""
-    city_data = request.get_json()
-    city = storage.get("City", city_id)
+def city_put(city_id=None):
+    """ Function that Update a state object and returns a JSON format"""
+    city_obj = storage.get(City, city_id)
 
-    if not city:
-        abort(404)
-    if not city_data:
-        return jsonify(error="Not a JSON"), 400
-
-    if 'name' in city_data:
+    if city_obj is not None:
+        city_data = request.get_json()
+        if not city_data:
+            return jsonify(error="Not a JSON"), 400
         for key, value in city_data.items():
-            if key not in ['id', 'state_id', 'created_at', 'updated_at']:
-                setattr(city, key, value)
-        storage.save()
-
-    update_dictionary = city.to_dict()
-    return jsonify(update_dictionary), 200
+            if key not in ['id', 'created_at', 'updated_at']:
+                setattr(city_obj, key, value)
+        city_obj.save()
+        return jsonify(city_obj.to_dict())
+    abort(404)
