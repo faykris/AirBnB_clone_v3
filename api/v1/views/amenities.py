@@ -70,18 +70,18 @@ def update_amenities(amenity_id):
     """Function that updates a Amenties dictionary and retireve
     in Json Format"""
     amenities_data = request.get_json()
-    amenitie = storage.get("Amenity", amenity_id)
+    amenity = storage.get("Amenity", amenity_id)
 
-    if not amenitie:
+    if not amenity:
         abort(404)
     if not amenities_data:
         abort(400, {"Not a JSON"})
 
     if 'name' in amenities_data:
         for key, value in amenities_data.items():
-            if key not in ['id', 'state_id', 'created_at', 'updated_at']:
-                setattr(amenitie, key, value)
+            if key not in ['id', 'amenity_id', 'created_at', 'updated_at']:
+                setattr(amenity, key, value)
         storage.save()
 
-    update_dictionary = amenitie.to_dict()
+    update_dictionary = amenity.to_dict()
     return jsonify(update_dictionary), 200
