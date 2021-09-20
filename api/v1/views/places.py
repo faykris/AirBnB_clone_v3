@@ -7,6 +7,8 @@ from models.state import City
 from api.v1.views import app_views
 from flask import jsonify, request, abort
 
+from models.user import User
+
 
 @app_views.route("/places", methods=["GET"])
 def places_get():
@@ -24,18 +26,18 @@ def places_get():
 
 @app_views.route("/cities/<city_id>/places", methods=["GET"])
 def places_by_cities_get(city_id):
-    """Function that return Place releated to teh cities
+    """Function that return Place related to teh cities
     object on JSON format"""
-    palces_list = []
+    places_list = []
 
     if not storage.get(City, city_id):
         abort(404)
 
     for place in storage.all(Place).values():
         if place.to_dict()["city_id"] == city_id:
-            palces_list.append(place.to_dict())
+            places_list.append(place.to_dict())
 
-    return jsonify(palces_list), 200
+    return jsonify(places_list), 200
 
 
 @app_views.route("/places/<place_id>", methods=["GET"])
@@ -66,23 +68,21 @@ def delete_place_id(place_id):
 def create_place(city_id):
     """Function that create a place object and returns a JSON format"""
     place_data = request.get_json()
-
     if not storage.get(City, city_id):
         abort(404)
     if not place_data:
-        abort(400, {"Not a JSON"})
+        return jsonify(error="Not a JSON"), 400
     if 'user_id' not in place_data:
-        abort(400, {"Missing user_id"})
-    if not storage.get("User", place_data["user_id"]):
+        return jsonify(error="Missing user_id"), 400
+    if not storage.get(User, place_data["user_id"]):
         abort(404)
     if 'name' not in place_data:
-        abort(400, {"Missing name"})
+        return jsonify(error="Missing name"), 400
 
     place_data["city_id"] = city_id
     new_place = Place(**place_data)
     storage.new(new_place)
     storage.save()
-
     return jsonify(new_place.to_dict()), 201
 
 
@@ -95,14 +95,14 @@ def update_places(place_id):
     if not place_update:
         abort(404)
     if not place_dictionary:
-        abort(400, {"Not a JSON"})
+        return jsonify(error="Not a JSON"), 400
 
     for key, value in place_dictionary.items():
-        if key not in ['id', 'user_id', 'place_id',
+        if key not in ['id', 'user_id', 'city_id',
                        'created_at', 'updated_at']:
             setattr(place_update, key, value)
             storage.save()
 
-    update_idctionary = place_update.to_dict()
+    update_dictionary = place_update.to_dict()
 
-    return jsonify(update_idctionary), 200
+    return jsonify(update_dictionary), 200

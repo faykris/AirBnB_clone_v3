@@ -34,7 +34,7 @@ def get_user_id(user_id):
 @app_views.route("/users/<string:user_id>", methods=["DELETE"],
                  strict_slashes=False)
 def delete_user_id(user_id):
-    """Function that remove a amenitie object on JSON format"""
+    """Function that remove a amenity object on JSON format"""
     users_data = storage.get(User, user_id)
 
     if users_data is not None:
@@ -48,13 +48,15 @@ def delete_user_id(user_id):
 @app_views.route("/users", methods=["POST"],
                  strict_slashes=False)
 def users_create():
-    """Function that creates and return a amenitie object on JSON format"""
+    """Function that creates and return a amenity object on JSON format"""
     users_data = request.get_json()
 
     if not users_data:
-        abort(400, {"Not a JSON"})
-    if 'name' not in users_data:
-        abort(400, {"Missing name"})
+        return jsonify(error="Not a JSON"), 400
+    if 'email' not in users_data:
+        return jsonify(error="Missing email"), 400
+    if 'password' not in users_data:
+        return jsonify(error="Missing password"), 400
 
     new_user = User(**users_data)
     storage.new(new_user)
@@ -75,7 +77,7 @@ def user_put(user_id=None):
         if not user_data:
             return jsonify(error="Not a JSON"), 400
         for key, value in user_data.items():
-            if key not in ['id', 'created_at', 'updated_at']:
+            if key not in ['id', 'email', 'created_at', 'updated_at']:
                 setattr(user_obj, key, value)
         user_obj.save()
         return jsonify(user_obj.to_dict())

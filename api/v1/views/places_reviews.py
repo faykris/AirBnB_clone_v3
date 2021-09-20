@@ -7,6 +7,8 @@ from models.place import Place
 from api.v1.views import app_views
 from flask import jsonify, request, abort
 
+from models.user import User
+
 
 @app_views.route("/reviews", methods=["GET"])
 def reviews_get():
@@ -24,7 +26,7 @@ def reviews_get():
 
 @app_views.route("/places/<place_id>/reviews", methods=["GET"])
 def get_reviews_by_places(place_id):
-    """Function that return a reviw object"""
+    """Function that return a review object"""
     review_list = []
 
     if not storage.get(Place, place_id):
@@ -70,13 +72,13 @@ def create_review(place_id):
     if not storage.get(Place, place_id):
         abort(404)
     if not review_data:
-        abort(400, {"Not a JSON"})
+        return jsonify(error="Not a JSON"), 400
     if 'user_id' not in review_data:
-        abort(400, {"Missing user_id"})
-    if not storage.get("User", review_data["user_id"]):
+        return jsonify(error="Missing user_id"), 400
+    if not storage.get(User, review_data["user_id"]):
         abort(404)
     if 'text' not in review_data:
-        abort(400, {"Missing text"})
+        return jsonify(error="Missing text"), 400
 
     review_data["place_id"] = place_id
     new_rev = Review(**review_data)
@@ -95,7 +97,7 @@ def update_reviews(review_id):
     if not review_data:
         abort(404)
     if not review_dictionary:
-        abort(400, {"Not a JSON"})
+        return jsonify(error="Not a JSON"), 400
 
     for key, value in review_dictionary.items():
         if key not in ['id', 'user_id', 'place_id',
@@ -103,5 +105,5 @@ def update_reviews(review_id):
             setattr(review_data, key, value)
             storage.save()
 
-    dictionary_udapte = review_data.to_dict()
-    return jsonify(dictionary_udapte), 200
+    dictionary_update = review_data.to_dict()
+    return jsonify(dictionary_update), 200
