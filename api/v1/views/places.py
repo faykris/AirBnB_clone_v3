@@ -53,7 +53,7 @@ def delete_place_id(place_id):
 @app_views.route("/cities/<string:city_id>/places", methods=["POST"])
 def create_place(city_id):
     """Function that create a place object and returns a JSON format"""
-    place_data = request.get_json()
+    place_data = request.get_json(silent=True)
     if not storage.get(City, city_id):
         abort(404)
     if not place_data:
@@ -74,7 +74,7 @@ def create_place(city_id):
 @app_views.route("/places/<string:place_id>", methods=["PUT"])
 def update_places(place_id):
     """Function that Update a place object and returns a JSON format"""
-    place_dictionary = request.get_json()
+    place_dictionary = request.get_json(silent=True)
     place_update = storage.get(Place, place_id)
 
     if not place_update:
