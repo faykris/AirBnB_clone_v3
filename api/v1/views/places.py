@@ -86,8 +86,5 @@ def update_places(place_id):
         if key not in ['id', 'user_id', 'city_id',
                        'created_at', 'updated_at']:
             setattr(place_update, key, value)
-            storage.save()
-
-    update_dictionary = place_update.to_dict()
-
-    return jsonify(update_dictionary), 200
+    storage.save()
+    return jsonify(place_update.to_dict()), 200
