@@ -10,21 +10,7 @@ from flask import jsonify, request, abort
 from models.user import User
 
 
-@app_views.route("/places", methods=["GET"])
-def places_get():
-    """Function that return  the list of all Place objects of a City
-    JSON format"""
-    places_list = []
-    places_dict = storage.all(Place).values()
-
-    for obj in places_dict:
-        place = obj.to_dict()
-        places_list.append(place)
-
-    return jsonify(places_list), 200
-
-
-@app_views.route("/cities/<city_id>/places", methods=["GET"])
+@app_views.route("/cities/<string:city_id>/places", methods=["GET"])
 def places_by_cities_get(city_id):
     """Function that return Place related to teh cities
     object on JSON format"""
@@ -40,7 +26,7 @@ def places_by_cities_get(city_id):
     return jsonify(places_list), 200
 
 
-@app_views.route("/places/<place_id>", methods=["GET"])
+@app_views.route("/places/<string:place_id>", methods=["GET"])
 def get_place_id(place_id):
     """Function that return a Place object id"""
     place = storage.get(Place, place_id)
@@ -50,7 +36,7 @@ def get_place_id(place_id):
         abort(404)
 
 
-@app_views.route("/places/<place_id>", methods=["DELETE"])
+@app_views.route("/places/<string:place_id>", methods=["DELETE"])
 def delete_place_id(place_id):
     """Function that remove a Place object"""
     place_delete = storage.get(Place, place_id)
@@ -64,7 +50,7 @@ def delete_place_id(place_id):
         abort(404)
 
 
-@app_views.route("/cities/<city_id>/places", methods=["POST"])
+@app_views.route("/cities/<string:city_id>/places", methods=["POST"])
 def create_place(city_id):
     """Function that create a place object and returns a JSON format"""
     place_data = request.get_json()
@@ -86,7 +72,7 @@ def create_place(city_id):
     return jsonify(new_place.to_dict()), 201
 
 
-@app_views.route("/places/<place_id>", methods=["PUT"])
+@app_views.route("/places/<string:place_id>", methods=["PUT"])
 def update_places(place_id):
     """Function that Update a place object and returns a JSON format"""
     place_dictionary = request.get_json()
