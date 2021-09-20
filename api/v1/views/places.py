@@ -67,7 +67,8 @@ def create_place(city_id):
 
     place_data["city_id"] = city_id
     new_place = Place(**place_data)
-    new_place.save()
+    storage.new(new_place)
+    storage.save()
     return jsonify(new_place.to_dict()), 201
 
 
