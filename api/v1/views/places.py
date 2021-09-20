@@ -10,7 +10,8 @@ from flask import jsonify, request, abort
 from models.user import User
 
 
-@app_views.route("/cities/<string:city_id>/places", methods=["GET"])
+@app_views.route("/cities/<string:city_id>/places", methods=["GET"],
+                 strict_slashes=False)
 def places_by_cities_get(city_id):
     """Function that return Place related to teh cities
     object on JSON format"""
@@ -26,7 +27,8 @@ def places_by_cities_get(city_id):
     return jsonify(places_list), 200
 
 
-@app_views.route("/places/<string:place_id>", methods=["GET"])
+@app_views.route("/places/<string:place_id>", methods=["GET"],
+                 strict_slashes=False)
 def get_place_id(place_id):
     """Function that return a Place object id"""
     place = storage.get(Place, place_id)
@@ -36,24 +38,23 @@ def get_place_id(place_id):
         abort(404)
 
 
-@app_views.route("/places/<string:place_id>", methods=["DELETE"])
+@app_views.route("/places/<string:place_id>", methods=["DELETE"],
+                 strict_slashes=False)
 def delete_place_id(place_id):
     """Function that remove a Place object"""
     place_delete = storage.get(Place, place_id)
-
     if place_delete:
         storage.delete(place_delete)
         storage.save()
         return jsonify({}), 200
-
-    else:
-        abort(404)
+    abort(404)
 
 
-@app_views.route("/cities/<string:city_id>/places", methods=["POST"])
+@app_views.route("/cities/<string:city_id>/places", methods=["POST"],
+                 strict_slashes=False)
 def create_place(city_id):
     """Function that create a place object and returns a JSON format"""
-    place_data = request.get_json(silent=True)
+    place_data = request.get_json()
     if not storage.get(City, city_id):
         abort(404)
     if not place_data:
@@ -71,10 +72,11 @@ def create_place(city_id):
     return jsonify(new_place.to_dict()), 201
 
 
-@app_views.route("/places/<string:place_id>", methods=["PUT"])
+@app_views.route("/places/<string:place_id>", methods=["PUT"],
+                 strict_slashes=False)
 def update_places(place_id):
     """Function that Update a place object and returns a JSON format"""
-    place_dictionary = request.get_json(silent=True)
+    place_dictionary = request.get_json()
     place_update = storage.get(Place, place_id)
 
     if not place_update:
