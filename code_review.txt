@@ -1,2 +1,2 @@
-faykris
-Closing pull request, the function will be tested with Holberton checker
+dantereto
+The functions added (get and count) are so detailed, the testing files are very good developed, the only thing that I have to tell you is... Congrats! :)
